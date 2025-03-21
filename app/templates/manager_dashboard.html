@@ -201,6 +201,44 @@
     <div class="container">
         <h2>Welcome, Manager</h2>
 
+
+        <h3>Folders in STL Directory: /{{ current_folder }}</h3>
+        <table>
+            <tr>
+                <th>Folder Name</th>
+            </tr>
+            {% for folder in stl_folders %}
+            <tr>
+                <td>{{ folder.name }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h3>Upload STL File</h3>
+        <form action="{{ url_for('upload_stl') }}" method="POST" enctype="multipart/form-data">
+            <select name="folder" required style="width: 80%; padding: 10px; font-size: 1rem; border-radius: 8px;">
+                <option value="" disabled selected>Select a folder</option>
+                {% for folder in stl_root_folders %}
+                <option value="{{ folder }}">{{ folder }}</option>
+                {% endfor %}
+            </select>
+
+            <input type="file" name="file" accept=".zip" required
+       style="margin-top: 10px; width: 80%; padding: 10px; font-size: 1rem; border-radius: 8px;">
+
+            <button type="submit" class="button" style="margin-top: 10px;">📤 Upload</button>
+        </form>
+
+        <h3>Create New Folder</h3>
+        <form action="{{ url_for('create_stl_folder') }}" method="POST">
+            <input type="text" name="folder_name" placeholder="Enter new folder name" required
+                style="width: 80%; padding: 10px; font-size: 1rem; border-radius: 8px;">
+            <button type="submit" class="button" style="margin-top: 10px;">📁 Create Folder</button>
+        </form>
+
+
+        
+
         <!-- Button Container -->
         <div class="button-container">
             <a href="{{ url_for('register', role='user') }}" class="button">➕ Add User</a>
@@ -232,8 +270,14 @@
         <!-- Logout Button -->
         <div class="button-container">
             <a href="{{ url_for('logout') }}" class="button logout-button">🚪 Logout</a>
+            <!-- Add this line just under the h2 Welcome line -->
+            <a href="{{ url_for('main') }}?username={{ username }}&role=manager" class="button" style="background-color: #6c757d;">🔙 Back to Main</a>
+
         </div>
     </div>
+
+
+
 
     <!-- Popup Notification -->
     <div id="notificationPopup" class="popup">

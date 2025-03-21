@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Folder View</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        table {
+            margin: 0 auto;
+            width: 90%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-size: 1.1em;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #28a745;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        img.thumb {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        img.thumb:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            padding-top: 60px;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.85);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .back-link {
+            display: block;
+            margin: 30px auto;
+            text-align: center;
+            text-decoration: none;
+            font-size: 1rem;
+            color: #007bff;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2>Contents of: {{ current_folder }}</h2>
+
+    <table>
+        <tr>
+            <th>Subfolder</th>
+            <th>Thumbnail</th>
+            <th>Description</th>
+        </tr>
+        {% for folder in folders %}
+        <tr>
+            <td>
+                <form action="{{ url_for('download_folder', folder_path=current_folder ~ '/' ~ folder.name) }}" method="get">
+                    <button type="submit">⬇️ Download {{ folder.name }}</button>
+                </form>
+            </td>
+            <td>
+                {% if folder.image %}
+                    <img src="{{ folder.image }}" class="thumb" onclick="openModal('{{ folder.image }}')" alt="Image">
+                {% else %}
+                    <em>No image</em>
+                {% endif %}
+            </td>
+            <td>
+                {% if folder.description %}
+                    <div style="max-width: 300px; text-align: left; margin: 0 auto;">
+                        {{ folder.description }}
+                    </div>
+                {% else %}
+                    <em>No description</em>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+
+    <a href="{{ url_for('main', username=session['user_id'], role='manager') }}" class="back-link">⬅️ Back to Main</a>
+
+    <!-- Modal HTML -->
+    <div id="imgModal" class="modal" onclick="closeModal()">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script>
+        function openModal(imageSrc) {
+            const modal = document.getElementById("imgModal");
+            const modalImg = document.getElementById("modalImage");
+            modal.style.display = "block";
+            modalImg.src = imageSrc;
+        }
+
+        function closeModal() {
+            document.getElementById("imgModal").style.display = "none";
+        }
+    </script>
+</body>
+</html>
